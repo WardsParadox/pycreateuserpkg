@@ -13,7 +13,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 '''createuserpkg.py
 A tool for creating Apple installer packages that create/update user accounts
 on macOS. Much code borrowed and/or inpsired by Per Olofsson's CreateUserPkg'''
@@ -33,12 +32,11 @@ def main():
     usage = "usage: %prog [options] /path/to/output.pkg"
 
     parser = optparse.OptionParser(usage=usage)
-    required_user_options = optparse.OptionGroup(
-        parser, 'Required User Options')
+    required_user_options = optparse.OptionGroup(parser,
+                                                 'Required User Options')
     required_user_options.add_option(
         '--name', '-n', help='User shortname. REQUIRED.')
-    required_user_options.add_option(
-        '--uid', '-u', help='User uid. REQUIRED.')
+    required_user_options.add_option('--uid', '-u', help='User uid. REQUIRED.')
 
     required_package_options = optparse.OptionGroup(
         parser, 'Required Package Options')
@@ -47,10 +45,11 @@ def main():
     required_package_options.add_option(
         '--identifier', '-i', help='Package identifier. REQUIRED.')
 
-    optional_user_options = optparse.OptionGroup(
-        parser, 'Optional User Options')
+    optional_user_options = optparse.OptionGroup(parser,
+                                                 'Optional User Options')
     optional_user_options.add_option(
-        '--password', '-p',
+        '--password',
+        '-p',
         help='User password. If this is not provided, interactively prompt for '
         'password.')
     optional_user_options.add_option(
@@ -63,13 +62,18 @@ def main():
     optional_user_options.add_option(
         '--shell', '-s', help='User shell path. Optional.')
     optional_user_options.add_option(
-        '--admin', '-a', action='store_true',
+        '--admin',
+        '-a',
+        action='store_true',
         help='User account should be added to admin group.')
     optional_user_options.add_option(
-        '--autologin', '-A', action='store_true',
+        '--autologin',
+        '-A',
+        action='store_true',
         help='User account should automatically login.')
-    optional_user_options.add_option('--hidden', action='store_true',
-                            help='User account should be hidden.')
+    optional_user_options.add_option(
+        '--hidden', action='store_true', help='User account should be hidden.')
+    optional_user_options.add_option('--imagepath', help='Path to user image')
 
     parser.add_option_group(required_user_options)
     parser.add_option_group(required_package_options)
@@ -104,9 +108,11 @@ def main():
             exit(-1)
 
     # make user plist
-    user_data = {'name': options.name,
-                 'uid': options.uid,
-                 'ShadowHashData': shadowhash.generate(password)}
+    user_data = {
+        'name': options.name,
+        'uid': options.uid,
+        'ShadowHashData': shadowhash.generate(password)
+    }
     if options.fullname:
         user_data['realname'] = options.fullname
     if options.gid:
@@ -119,15 +125,18 @@ def main():
         user_data['shell'] = options.shell
     if options.hidden:
         user_data['IsHidden'] = u'YES'
+    if options.imagepath:
+        user_data['image_path'] = options.imagepath
 
     user_plist = userplist.generate(user_data)
 
-
     # set up package options/choices
-    pkg_data = {'version': options.version,
-                'pkgid': options.identifier,
-                'destination_path': filename,
-                'user_plist': user_plist}
+    pkg_data = {
+        'version': options.version,
+        'pkgid': options.identifier,
+        'destination_path': filename,
+        'user_plist': user_plist
+    }
     if options.autologin:
         pkg_data['kcpassword'] = kcpassword.generate(password)
     if options.admin:

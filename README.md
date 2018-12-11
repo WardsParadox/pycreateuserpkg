@@ -26,7 +26,9 @@ Options:
                         User shell path. Optional.
     -a, --admin         User account should be added to admin group.
     -A, --autologin     User account should automatically login.
-
+    --hidden            User account should be hidden.
+    --imagepath=IMAGEPATH
+                        Path to user image (this must exist on the system you are installing this package on)
   Package Options:
     -V VERSION, --version=VERSION
                         Package version number. Required.
